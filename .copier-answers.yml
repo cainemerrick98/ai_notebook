@@ -1,0 +1,14 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v4.4.0
+_src_path: https://github.com/jupyterlab/extension-template
+author_email: cainemerrick@gmail.com
+author_name: Caine Merrick
+has_binder: false
+has_settings: false
+kind: frontend-and-server
+labextension_name: frontend
+project_short_description: Seamless integration of AI into notebooks
+python_name: backend
+repository: ''
+test: true
+
