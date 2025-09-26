@@ -1,23 +1,51 @@
 import * as React from 'react';
 import { ReactWidget } from '@jupyterlab/ui-components';
+import { requestAPI } from './handler';
 
 interface Message {
     sender: string
     content: string
 }
 
+interface LLMResponse{
+    response: string
+}
+
+export async function callLLM(message: Message): Promise<LLMResponse> {
+  // POST request options
+  const init: RequestInit = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(message),
+  };
+
+  console.log(init)
+
+  // Call the API extension
+  const data = await requestAPI<LLMResponse>('llm', init);
+
+  return data;
+}
+
 const AISidebar = () => {
     const [messages, SetMessages] = React.useState<Message[]>([]);
     const [input, setInput] = React.useState('');
 
-    const sendMessage = () =>{
-        if(!input.trim()) return;
+    const sendMessage = () => {
+        if (!input.trim()) return;
 
-        const newMessages = [...messages, {sender:'User', content:input}]
+        const userMessage = { sender: 'User', content: input };
+        
+        // Add user message
+        SetMessages(prev => [...prev, userMessage]);
 
-        SetMessages(newMessages)
-        setInput('')
-    }
+        setInput('');
+
+        // Call LLM and append response
+        callLLM(userMessage).then(aiResponse => {
+            SetMessages(prev => [...prev, { sender: 'Assistant', content: aiResponse.response }]);
+        });
+    };
     
     return( 
         <div style={{ display: 'flex', flexDirection: 'column', height:'100%', justifyContent:'space-between'}}>

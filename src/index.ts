@@ -13,7 +13,6 @@ function _activate(app: JupyterFrontEnd){
       label: 'AI',
       execute: () => {
         const widget = new AISidebarWidget();
-        console.log(widget)
         app.shell.add(widget, 'right', {rank: 0})
         app.shell.activateById(widget.id);
       }

@@ -23,7 +23,10 @@ ui-tests/playwright-report/
 __pycache__/
 *.py[cod]
 *$py.class
+
+
 venv/
+.env
 
 # C extensions
 *.so
