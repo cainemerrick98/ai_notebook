@@ -24,14 +24,31 @@ class LlmExtensionHandler(APIHandler):
     @tornado.web.authenticated
     def post(self) -> str:
         json_body = self.get_json_body()
-        logger.debug(json_body)
-        message = json_body.get("content")
-        logger.debug(message)
+        message = json_body.get("message")["content"]
+        context = json_body.get("context")
+        if context:
+            cells = context["cells"]
+        
+        prompt = f"""
+        You are an expert data scientist. Users interact with you via
+        a sidebar in their jupyter lab. They will ask general python questions
+        and questions specific to your code. You will be given the user message
+        and in some cases also context from the notebook. Respond in a helpful 
+        manner trying as best you can to answer the query.
+
+        User query: 
+        {message}
+
+        Context:
+
+        Cells:
+        {cells}
+        """
         
         try:
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
-                messages=[{"role":"user", "content":message}]
+                messages=[{"role":"user", "content":prompt}]
             ).choices[0].message.content
         except openai.BadRequestError:
             self.finish(json.dumps({"error": f"Bad Request Error value of message was {message}"}))
